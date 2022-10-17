@@ -1,0 +1,126 @@
+#1
+highstress<-c(10,9,8,9,10,8)
+moderatestress<-c(8,10,6,7,8,8)
+lowstress<-c(4,6,6,4,2,2)
+
+stress.data<-data.frame(highstress,moderatestress,lowstress)
+stress.data
+
+highstress moderatestress lowstress
+1         10              8         4
+2          9             10         6
+3          8              6         6
+4          9              7         4
+5         10              8         2
+6          8              8         2
+
+summary(stress.data)
+
+highstress    moderatestress     lowstress  
+Min.   : 8.00   Min.   : 6.000   Min.   :2.0  
+1st Qu.: 8.25   1st Qu.: 7.250   1st Qu.:2.5  
+Median : 9.00   Median : 8.000   Median :4.0  
+Mean   : 9.00   Mean   : 7.833   Mean   :4.0  
+3rd Qu.: 9.75   3rd Qu.: 8.000   3rd Qu.:5.5  
+Max.   :10.00   Max.   :10.000   Max.   :6.0 
+
+stackedstress = stack(stress.data)
+ stackedstress
+ 
+ 
+values            ind
+1      10     highstress
+2       9     highstress
+3       8     highstress
+4       9     highstress
+5      10     highstress
+6       8     highstress
+7       8 moderatestress
+8      10 moderatestress
+9       6 moderatestress
+10      7 moderatestress
+11      8 moderatestress
+12      8 moderatestress
+13      4      lowstress
+14      6      lowstress
+15      6      lowstress
+16      4      lowstress
+17      2      lowstress
+18      2      lowstress
+
+# performing anova test
+ analysis<-lm(values ~ as.factor(ind), data = stackedstress)
+ anova(analysis)
+ 
+Analysis of Variance Table
+
+Response: values
+Df Sum Sq Mean Sq F value    Pr(>F)    
+as.factor(ind)  2 82.111  41.056  21.358 4.082e-05 ***
+  Residuals      15 28.833   1.922                      
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# with the results above it is statistically significant, with the p-value is is less than the significance level thus we can reject null hypothesis
+# f-value = 21 meaning that there is a large ratio of variance
+plot(values ~ ind, data = stackedstress)
+
+TukeyHSD(anova_results)
+ 
+Tukey multiple comparisons of means
+95% family-wise confidence level
+
+Fit: aov(formula = values ~ ind, data = stackedstress)
+
+$ind
+                             diff       lwr        upr     p adj
+moderatestress-highstress -1.166667 -3.245845  0.9125117 0.3382642
+lowstress-highstress      -5.000000 -7.079178 -2.9208216 0.0000440
+lowstress-moderatestress  -3.833333 -5.912512 -1.7541550 0.0006586
+
+
+#2
+
+install.packages("ISwR")
+library(ISwR)
+data("zelazo")
+summary(zelazo)
+
+stackedzelazo = stack(zelazo)
+stackedzelazo
+
+  values     ind
+1    9.00  active
+2    9.50  active
+3    9.75  active
+4   10.00  active
+5   13.00  active
+6    9.50  active
+7   11.00 passive
+8   10.00 passive
+9   10.00 passive
+10  11.75 passive
+11  10.50 passive
+12  15.00 passive
+13  11.50    none
+14  12.00    none
+15   9.00    none
+16  11.50    none
+17  13.25    none
+18  13.00    none
+19  13.25  ctr.8w
+20  11.50  ctr.8w
+21  12.00  ctr.8w
+22  13.50  ctr.8w
+23  11.50  ctr.8w
+
+#performing anova test
+anova_zelazo = aov(values ~ ind, data = stackedzelazo)
+summary(anova_zelazo)
+
+              Df Sum Sq Mean Sq F value Pr(>F)
+ind           3  14.78   4.926   2.142  0.129
+Residuals     19  43.69   2.299
+
+
+
